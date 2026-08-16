@@ -1,0 +1,33 @@
+name: Build unsigned IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build unsigned archive
+        run: |
+          xcodebuild archive \
+            -project TimeWageApp.xcodeproj \
+            -scheme TimeWageApp \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/TimeWageApp.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            DEVELOPMENT_TEAM=""
+      - name: Package unsigned IPA artifact
+        run: |
+          mkdir -p build/Payload
+          cp -R build/TimeWageApp.xcarchive/Products/Applications/TimeWageApp.app build/Payload/
+          cd build
+          zip -r TimeWageApp-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TimeWageApp-unsigned-ipa
+          path: build/TimeWageApp-unsigned.ipa

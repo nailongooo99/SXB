@@ -12,7 +12,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build unsigned archive
         id: build
-        continue-on-error: true
         run: |
           xcodebuild -list -project TimeWageApp.xcodeproj | tee build-project-list.txt
           set -o pipefail

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="WorkSession" representedClassName="WorkSession" syncable="NO" codeGenerationType="class">
+    <entity name="WorkSession" representedClassName="WorkSession" syncable="NO" codeGenerationType="category/extension">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

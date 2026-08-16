@@ -32,6 +32,17 @@ jobs:
           cp -R build/TimeWageApp.xcarchive/Products/Applications/TimeWageApp.app build/Payload/
           cd build
           zip -r TimeWageApp-unsigned.ipa Payload
+      - name: Publish Xcode diagnostics
+        if: always()
+        run: |
+          echo '## Xcode project list' >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          cat build-project-list.txt >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo '## Xcode build log' >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          tail -n 120 build-xcode.log >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

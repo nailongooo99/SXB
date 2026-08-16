@@ -11,7 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build unsigned archive
+        id: build
+        continue-on-error: true
         run: |
+          xcodebuild -list -project TimeWageApp.xcodeproj | tee build-project-list.txt
+          set -o pipefail
           xcodebuild archive \
             -project TimeWageApp.xcodeproj \
             -scheme TimeWageApp \
@@ -20,14 +24,19 @@ jobs:
             -archivePath build/TimeWageApp.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            DEVELOPMENT_TEAM=""
+            DEVELOPMENT_TEAM="" 2>&1 | tee build-xcode.log
       - name: Package unsigned IPA artifact
+        if: steps.build.outcome == 'success'
         run: |
           mkdir -p build/Payload
           cp -R build/TimeWageApp.xcarchive/Products/Applications/TimeWageApp.app build/Payload/
           cd build
           zip -r TimeWageApp-unsigned.ipa Payload
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: TimeWageApp-unsigned-ipa
-          path: build/TimeWageApp-unsigned.ipa
+          name: TimeWageApp-build-diagnostics
+          path: |
+            build-project-list.txt
+            build-xcode.log
+            build/TimeWageApp-unsigned.ipa

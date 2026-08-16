@@ -42,7 +42,7 @@ struct DashboardView: View {
     }
 }
 
-private struct RateCard: View { let title: String; let value: Double; let hidden: Bool; var body: some View { VStack { Text(title).font(.caption).foregroundStyle(.secondary); Text(hidden ? "****" : value, format: .currency(code: "CNY")).font(.headline) }.frame(maxWidth: .infinity).padding().background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16)) } }
+private struct RateCard: View { let title: String; let value: Double; let hidden: Bool; var body: some View { VStack { Text(title).font(.caption).foregroundStyle(.secondary); Text(hidden ? "****" : String(format: "¥%.2f", value)).font(.headline) }.frame(maxWidth: .infinity).padding().background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16)) } }
 
 struct TimeClockView: View {
     @ObservedObject var settings: SalarySettings; @ObservedObject var clock: ClockViewModel; @ObservedObject var store: WorkSessionStore
@@ -58,7 +58,7 @@ struct TimeClockView: View {
                         Button { editing = item } label: { SessionRow(item: item, store: store, hidden: settings.isAmountHidden, rate: settings.perSecond) }.foregroundStyle(.primary)
                     }.onDelete { offsets in offsets.map { store.sessions[$0] }.forEach(store.delete) }
                 }.listStyle(.insetGrouped)
-            }.padding(.top).navigationTitle("打卡").sheet(item: $editing) { EditSessionView(item: $0, store: store) }
+            }.padding(.top).navigationTitle("打卡").sheet(isPresented: Binding(get: { editing != nil }, set: { if !$0 { editing = nil } })) { if let item = editing { EditSessionView(item: item, store: store) } }
         }
     }
     private func toggleClock() { if let start = clock.activeStart { _ = store.create(start: start, end: clock.now, breakDuration: settings.breakHours * 3600); clock.activeStart = nil } else { clock.activeStart = clock.now } }
